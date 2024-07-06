@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <?php include ('../admin/component/admin_head.php'); ?>
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../admin/component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../admin/component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">HOANG OCEEE</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">hoang ocee</li>
+                        </ol>
+                        
+                        <!-- Thêm sửa đoạn này -->
+                    </div>
+                </main>
+                <?php include ('../admin/component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../admin/component/admin_script.php'); ?>
+    </body>
+</html>

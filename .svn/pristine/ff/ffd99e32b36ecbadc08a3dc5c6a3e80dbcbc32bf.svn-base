@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Admin</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <div class="container form-text">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h3 style="margin: auto; margin-top: 20px; text-align: center;">Thêm Sản Phẩm</h3>
+                                </div>
+                                <div class="col-sm-12">
+                                    <!-- Form Thêm sản phẩm -->
+                                    <form method="post" enctype="multipart/form-data">
+                                        <!-- Tên sản phẩm -->
+                                        <div class="form-group">
+                                            <label for="txtname">Tên sản phẩm</label>
+                                            <input class="form-control" id="txtname" type="text" name="txtname" value="<?php echo isset($_POST["txtname"]) ? $_POST["txtname"] : "" ?>">
+                                        </div>
+                                        <!-- Mô tả sản phẩm -->
+                                        <div class="form-group">
+                                            <label for="txtdesc">Mô tả sản phẩm</label>
+                                            <textarea class="form-control" type="text" id="txtdesc" name="txtdesc" rows="3" value="<?php echo isset($_POST["txtdesc"]) ? $_POST["txtdesc"] : "" ?>"></textarea>
+                                        </div>
+                                        <!-- Số lượng sản phẩm -->
+                                        <div class="form-group">
+                                            <label for="txtquantity">Số lượng sản phẩm</label>
+                                            <input class="form-control" type="number" id="txtquantity" name="txtquantity" value="<?php echo isset($_POST["txtquantity"]) ? $_POST["txtquantity"] : "" ?>">
+                                        </div>
+                                        <!-- Giá sản phẩm -->
+                                        <div class="form-group">
+                                            <label for="txtprice">Giá sản phẩm</label>
+                                            <input class="form-control" type="number" id="txtprice" name="txtprice" value="<?php echo isset($_POST["txtprice"]) ? $_POST["txtprice"] : "" ?>">
+                                        </div>
+                                        <!-- Loại sản phẩm -->
+                                        <div class="form-group">
+                                            <label>Thương hiệu</label>
+                                            <select class="form-control" name="txtcateid">
+                                                <option value="" selected>-- Chọn loại --</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Giới tính</label>
+                                            <select class="form-control" name="txtcateid">
+                                                <option value="" selected>-- Chọn loại --</option>
+                                                <option value="">Nam</option>
+                                                <option value="">Nữ</option>
+                                                <option value="">Nam và nữ</option>
+                                            </select>
+                                        </div>
+                                        <!-- Loại sản phẩm -->
+                                        <div class="form-group">
+                                                <label for="txtpic">Ảnh 1</label>
+                                            <div class="custom-file">
+                                                <input type="file" id="txtpic" name="txtpic" accept=".png,.gif,.jpg,.jpeg">
+                                                <!-- <label class="custom-file-label" for="txtpic">Chọn hình</label> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="txtpic">Ảnh 2</label>
+                                            <div class="custom-file">
+                                                <input type="file" id="txtpic" name="txtpic" accept=".png,.gif,.jpg,.jpeg">
+                                                <!-- <label class="custom-file-label" for="txtpic">Chọn hình</label> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="txtpic">Ảnh 3</label>
+                                            <div class="custom-file">
+                                                <input type="file" id="txtpic" name="txtpic" accept=".png,.gif,.jpg,.jpeg">
+                                                <!-- <label class="custom-file-label" for="txtpic">Chọn hình</label> -->
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" name="btnsubmit">Thêm sản phẩm</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <?php include ('../component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../component/admin_script.php'); ?>
+    </body>
+</html>

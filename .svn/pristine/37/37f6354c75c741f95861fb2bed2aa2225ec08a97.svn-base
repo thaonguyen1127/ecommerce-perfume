@@ -1,0 +1,76 @@
+<?php 
+    include '../components/connect.php';
+    session_start();
+
+    // if(isset($_SESSION['user_id'])){
+    //     $user_id = $_SESSION['user_id'];
+    // }else{
+    //     $user_id = '';
+    // };
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <?php include ('../admin/component/admin_head.php'); ?>
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../admin/component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../admin/component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                    <div class="container-fluid px-4">
+                        <div style="margin: auto; margin-top: 20px; text-align: center;">
+                            <h3>Sản phẩm</h3>
+                        </div>
+                        <?php
+                            $sql = "SELECT * FROM tbl_category";
+                            $result = $conn->query($sql);
+
+                            if ($result && $result->rowCount() > 0) {
+                        ?>
+
+                        <table class="table" style="margin-top: 20px;">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">STT</th>
+                                    <th scope="col">Tên thương hiệu</th>
+                                    <th scope="col">Mô tả</th>
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $STT = 1;
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                <tr>
+                                    <th scope="row"><?=$STT?></th>
+                                    <td><?=$row['name']?></td>
+                                    <td><?=$row['description']?></td>
+                                    <td>
+                                        <a href="#">Sửa</a>
+                                        <a href="#">Xóa</a>
+                                    </td>
+                                </tr>
+                                <?php
+                                    $STT++;
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+
+                        <?php
+                            } else {
+                                echo "Không có dữ liệu để hiển thị.";
+                            }
+                        ?>
+                    </div>
+                </main>
+                <?php include ('../admin/component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../admin/component/admin_script.php'); ?>
+    </body>
+</html>

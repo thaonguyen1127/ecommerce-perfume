@@ -1,0 +1,93 @@
+<?php 
+    include '../components/connect.php';
+    session_start();
+
+    // if(isset($_SESSION['user_id'])){
+    //     $user_id = $_SESSION['user_id'];
+    // }else{
+    //     $user_id = '';
+    // };
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <?php include ('../admin/component/admin_head.php'); ?>
+        <style>
+            .table td, .table th {
+                vertical-align: middle;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../admin/component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../admin/component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+            <main>
+                    <div class="container-fluid px-4">
+                    <div class="container-fluid px-4">
+                        <div style="margin: auto; margin-top: 20px; text-align: center;">
+                            <h3>Đơn hàng</h3>
+                        </div>
+                        <?php
+                            $sql = "SELECT * FROM tbl_order ORDER BY booking_date DESC";
+                            $result = $conn->query($sql);
+
+                            if ($result && $result->rowCount() > 0) {
+                        ?>
+
+                        <table class="table" style="margin-top: 20px;">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Người nhận</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $STT = 1;
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                <tr>
+                                    <td> <?=$STT ?></td>
+                                    <td> <?=$row['id']; ?> </td>
+                                    <td> <?=$row['order_name']; ?> </td>
+                                    <td> <?=$row['phone']; ?></td>
+                                    <td> <?=date('d-m-Y', strtotime( $row['booking_date']));?></td>
+                                    <td> <p class="status" style="padding:5px;color: #fff; background-color: <?php 
+                                                if($row['status']=='1'){echo'green';} 
+                                                elseif($row['status']=='3'){echo'red';}
+                                                elseif($row['status']=='2'){echo'#2f5de4';}
+                                                else{echo'orange';} ?> "><?php if($row['status']=="0") {echo 'In processing';}elseif($row['status']=="1") {echo 'Delivering';}
+                                                elseif($row['status']=="2") {echo 'Received';} else echo 'Canceled';?></p> </td>
+                                    <td>
+                                        <a href="order-details.php?id=<?=$row['id']; ?>" name="update"><i class="fa-sharp fa-solid fa-pen-to-square" style="color: #288ae6;"></i></a>
+                                        <!-- <a href="order-details.php?id=<=$row['id']; ?>" name="delete" onclick="return confirm('delete this cart item')"><i class="fa-solid fa-trash" style="color: #ed7c12;"></i></a> -->
+                                    </td>
+                                </tr>
+                                <?php
+                                    $STT++;
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+
+                        <?php
+                            } else {
+                                echo "Không có dữ liệu để hiển thị.";
+                            }
+                        ?>
+                    </div>
+                </main>
+                <?php include ('../admin/component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../admin/component/admin_script.php'); ?>
+    </body>
+</html>

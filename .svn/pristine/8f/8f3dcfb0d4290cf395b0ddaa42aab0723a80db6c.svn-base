@@ -1,0 +1,105 @@
+<?php 
+    include '../components/connect.php';
+    session_start();
+
+    // if(isset($_SESSION['user_id'])){
+    //     $user_id = $_SESSION['user_id'];
+    // }else{
+    //     $user_id = '';
+    // };
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <?php include ('../admin/component/admin_head.php'); ?>
+        <style>
+            .table td, .table th {
+                vertical-align: middle;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../admin/component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../admin/component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+            <main>
+                    <div class="container-fluid px-4">
+                    <div class="container-fluid px-4">
+                        <div style="margin: auto; margin-top: 20px; text-align: center;">
+                            <h3>Sản phẩm</h3>
+                        </div>
+                        <?php
+                            $sql = "SELECT * FROM tbl_product";
+                            $result = $conn->query($sql);
+
+                            if ($result && $result->rowCount() > 0) {
+                        ?>
+
+                        <table class="table" style="margin-top: 20px;">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">STT</th>
+                                    <th scope="col">Tên sản phẩm</th>
+                                    <th scope="col">Chi tiết</th>
+                                    <th scope="col">Giá</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Thương hiệu</th>
+                                    <th scope="col">Giới tính</th>
+                                    <th scope="col">Ảnh</th>
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $STT = 1;
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                <tr>
+                                    <th scope="row"><?=$STT?></th>
+                                    <td style="vertical-align: middle;"><?=$row['name']?></td>
+                                    <td><?=$row['details']?></td>
+                                    <td><?=$row['price']?>$</td>
+                                    <td><?=$row['quantity']?></td>
+                                    <td><?=$conn->query("SELECT name FROM tbl_category WHERE id = " . $row['category_id'])->fetch(PDO::FETCH_ASSOC)['name']?></td>
+                                    <td>
+                                        <?php
+                                            $gender = $row['sex'];
+                                            if ($gender == 1) {
+                                                echo 'Nam';
+                                            } elseif ($gender == 2) {
+                                                echo 'Nữ';
+                                            } elseif ($gender == 3) {
+                                                echo 'Nam và Nữ';
+                                            } else {
+                                                echo 'Giới tính không xác định';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td><img src="../uploaded_img/<?=$row['image_1']?>" alt="Ảnh" style="width: 100px; height: 100px;"></td>
+                                    <td>
+                                        <a href="#" style="margin-right: 10px;"><i class="fas fa-edit"></i></a>
+                                        <a href="#" style="color: black;"><i class="fas fa-trash-alt"></i></a>
+                                    </td>
+                                </tr>
+                                <?php
+                                    $STT++;
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+
+                        <?php
+                            } else {
+                                echo "Không có dữ liệu để hiển thị.";
+                            }
+                        ?>
+                    </div>
+                </main>
+                <?php include ('../admin/component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../admin/component/admin_script.php'); ?>
+    </body>
+</html>

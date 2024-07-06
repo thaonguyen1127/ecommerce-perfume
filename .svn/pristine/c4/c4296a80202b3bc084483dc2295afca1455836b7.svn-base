@@ -1,0 +1,114 @@
+<!-- comment -->
+<section style="background-color: #f7f6f6;">
+        <div class="container my-5 py-5 text-dark">
+            <div class="row d-flex justify-content-center">
+            <div class="col-md-12 col-lg-10 col-xl-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-dark mb-0">ĐÁNH GIÁ SẢN PHẨM</h4>
+                
+                </div>
+                <?php
+                    // Fetch all comments
+                    $select_comment = $conn->prepare("SELECT TIMESTAMPDIFF(HOUR, time_post, NOW()) AS time_hour, USER.full_name, COMMENT.content, COMMENT.time_post, comment.review, product.name FROM tbl_user AS user, tbl_product AS product, tbl_comment AS comment WHERE comment.user_id = user.id and COMMENT.product_id = product.id AND product.id = 1;");
+                    $select_comment->execute();
+                    $fetch_comment = $select_comment->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    // Số comment trên mỗi trang
+                    $commentsPerPage = 1;
+                    
+                    // Số trang hiện tại
+                    if (isset($_GET['page'])) {
+                        $currentPage = $_GET['page'];
+                    } else {
+                        $currentPage = 1;
+                    }
+                    
+                    // Tổng số comment
+                    $totalComments = count($fetch_comment);
+                    
+                    // Tính tổng số trang
+                    $totalPages = ceil($totalComments / $commentsPerPage);
+                    
+                    // Tính chỉ số bắt đầu và kết thúc của comment mà bạn muốn hiển thị trên trang hiện tại
+                    $startIndex = ($currentPage - 1) * $commentsPerPage;
+                    $endIndex = min($startIndex + $commentsPerPage - 1, $totalComments - 1);
+                    
+                    // Lấy danh sách comment cho trang hiện tại
+                    $commentsOnCurrentPage = array_slice($fetch_comment, $startIndex, $commentsPerPage);
+                    
+                    foreach ($commentsOnCurrentPage as $fetch_comment) {
+                        // Rest of your code to display comments          
+                ?>
+                <div class="card mb-3 comment-list">
+                <div class="card-body">
+                    <div class="d-flex flex-start">
+                    <img class="rounded-circle shadow-1-strong me-3"
+                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(26).webp" alt="avatar" width="40"
+                        height="40" />
+                    <div class="w-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-primary fw-bold mb-0">
+                            <?=$fetch_comment['full_name']?><br>
+                            <span class="text-dark ms-2"><?=$fetch_comment['content']?></span>
+                        </h6>
+                        <p class="mb-0"><?= $fetch_comment['time_hour']?> hour ago</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                        <p class="small mb-0" style="color: #aaa;">
+                            <a href="#!" class="link-grey">Remove</a> •
+                            <a href="#!" class="link-grey">Reply</a> •
+                            <a href="#!" class="link-grey">Translate</a>
+                        </p>
+                        <div class="d-flex flex-row">
+                            <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $fetch_comment['review']) {
+                                        echo '<i class="fa fa-star"></i>';
+                                    } else {
+                                        echo '<i class="fa fa-star-o"></i>';
+                                    }
+                                }
+                            ?>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <?php
+                    }
+                ?>
+                <!-- Tạo các liên kết phân trang -->
+                <ul class="pagination">
+                    <?php if ($currentPage > 1) { ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?id=<?= $product_id?>&page=<?= $currentPage - 1 ?>" aria-label="Previous">
+                                <span aria-hidden="true">&lsaquo;</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
+                        <li class="page-item <?php if ($i == $currentPage) echo 'active'; ?>">
+                            <a class="page-link" href="?id=<?= $product_id?>&page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($currentPage < $totalPages) { ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?id=<?= $product_id?>&page=<?= $currentPage + 1 ?>" aria-label="Next">
+                                <span aria-hidden="true">&rsaquo;</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // Sử dụng JavaScript để tự động tăng chiều cao
+        function autoExpandTextArea(element) {
+            element.style.height = "auto";
+            element.style.height = (element.scrollHeight) + "px";
+        }
+    </script>
+    <!-- end-comment -->

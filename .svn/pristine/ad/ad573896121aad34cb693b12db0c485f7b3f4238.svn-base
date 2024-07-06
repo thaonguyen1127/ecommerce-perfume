@@ -1,0 +1,310 @@
+<?php
+include '..\components\connect.php';
+
+session_start();
+
+// if(isset($_SESSION['user_id'])){
+//    $user_id = $_SESSION['user_id'];
+// }else{
+//    $user_id = '';
+// };
+if(isset($_GET['delete_blog'])){
+    $delete_blog=$_GET['delete_blog'];
+    $delete_order = $conn->prepare("DELETE FROM `tbl_blog` WHERE id = ?");
+    $delete_order->execute([$delete_blog]);
+    header('location:blog.php');
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <?php include ('../admin/component/admin_head.php'); ?>
+    <style>
+        main{
+            
+        }
+        .container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        }
+
+        .block {
+        width: calc(33.33%);
+        margin-bottom: 30px;
+        padding: 0 15px;
+        box-sizing: border-box;
+        flex-direction: column;
+        }
+
+        .image-container {
+        width: 100%; /* Kích thước cố định cho khối chứa ảnh */
+        height: 254.96px;
+        overflow: hidden; /* Ẩn các phần tử vượt ra ngoài kích thước của khối */
+        }
+
+        .image {
+        width: 100%; /* Ảnh tỷ lệ theo kích thước của khối chứa */
+        height: 100%;
+        }
+
+        .content {
+        position: relative;
+        padding: 30px 25px 25px 25px;
+        margin: -35px 25px 0 25px;
+        background-color: white;
+        z-index: 1;
+        }
+
+        .date {
+        font-size: 14px;
+        margin-bottom: 10px;
+        }
+
+        .title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        }
+
+        .read-more {
+        text-decoration: none;
+        display: inline-block;
+        color: #111111;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        padding: 3px 0;
+        position: relative;
+        }
+
+        a:hover{
+            color: #111111;
+            text-decoration: none;
+        }
+
+        .read-more::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2.5px;
+            background-color: red; /* Màu sắc của đường kẻ */
+            transition: width 0.3s ease; /* Hiệu ứng dãn đường kẻ */
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Hiệu ứng khi di vào chữ "Đọc thêm" */
+        .read-more:hover::after {
+            width: 50%; /* Khi di vào, đường kẻ dãn ra hết chiều rộng của chữ "Đọc thêm" */
+            height: 1px;
+        }
+
+        .table_content{
+            width: 100%;
+        }
+        
+        @media screen and (max-width: 1200px) {
+        .block {
+            width: 50%; /* Khi màn hình nhỏ hơn hoặc bằng 768px, 1 dòng chỉ hiển thị 2 khối */
+        }
+
+        @media screen and (max-width: 768px) {
+            .block {
+                width: 100%; /* Khi màn hình nhỏ hơn hoặc bằng 480px, 1 dòng chỉ hiển thị 1 khối */
+            }
+        }
+        
+    }
+    </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <?php include ('../admin/component/admin_nav.php'); ?>
+        <div id="layoutSidenav">
+            <?php include ('../admin/component/admin_layout.php'); ?>
+            <div id="layoutSidenav_content">
+                <main>
+                <form action="" method="post" class="container" style="margin-left: 100px;">
+                    <input type="submit" name="buttonthem" value="Thêm tin tức">
+                </form>
+                <div class="container">
+                <?php
+                    if (isset($_POST['buttonthem'])) {
+                ?>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <div class="add_blog" style="padding: 25px;border: 1px solid;border-radius: 24px;">
+                            <h4 style="text-align: center;">Thêm mới tin tức</h4>
+                            <input type="text" required id="tieuDe" name="title" placeholder="Nhập tiêu đề">
+                            <input type="file" required id="anh" accept="image/*" name="file_anh_blog">
+                            <input type="submit" name="themtintuc">
+                        </div>
+                    </form>
+                    <?php } ?>
+                    <?php
+                    if (isset($_POST['themtintuc'])) {
+                        $title=$_POST['title'];
+                        $file_name = $_FILES["file_anh_blog"]["name"];
+                        $file_temp = $_FILES["file_anh_blog"]["tmp_name"];
+                        $select_blog = $conn->prepare("SELECT * FROM tbl_blog"); 
+                        $select_blog->execute();
+                        $fetch_blog = $select_blog->fetch(PDO::FETCH_ASSOC);
+                        $bolen=true;
+                        while ($fetch_blog = $select_blog->fetch(PDO::FETCH_ASSOC)){
+                            if($fetch_blog['title'] == $title){
+                                $bolen=false;
+                            }
+                        }
+                        if($bolen==false){
+                            echo'blog đã có !';
+                        }else{
+                            $target_directory = "../uploads/"; // Thư mục lưu trữ ảnh
+                            $target_file = $target_directory . $file_name;
+                            $luu = move_uploaded_file($file_temp, $target_file);
+                            $sql = "INSERT INTO tbl_blog (title,blog_image) VALUES (?, ?)";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute([$title,$file_name]);
+                            ?>
+                            <form action="" method="post" style="width=100%">
+                                <div class="add_blog">
+                                    <h4>Tiêu đề: <?= $title ?></h4>
+                                    <input type="hidden" id="readonly-input" name="title" value="<?= $title ?>" readonly>
+                                </div>
+                                <div class="add_content">
+                                    <input type="number" required name="sonoidung" placeholder="Nhập số nội dung">
+                                    <input type="submit" required value="nhapnoidung" name="nhapnoidung">
+                                </div>
+                            </form>
+                            <?php
+                        }
+                    }
+                    if (isset($_POST['nhapnoidung'])) {
+                        $sonoidung = $_POST['sonoidung'];
+                        $title=$_POST['title'];
+                    ?>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <div class="table_content">
+                        <div class="add_blog">
+                            <h4>Tiêu đề: <?= $title ?></h4>
+                            <input type="hidden" id="readonly-input" name="title" value="<?= $title ?>" readonly>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Số thứ tự</th>
+                                    <th>Nội dung</th>
+                                    <th>Ảnh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="danhSach">
+                                <?php
+                                $count=0;
+                                for ($i = 0; $i < $sonoidung; $i++) {
+                                ?>
+                                <tr>
+                                    <th><?= $count+=1 ?></th>
+                                    <th><input type="file" required name="anh<?= $i ?>"></th>
+                                    <th><input type="text" required name="content<?= $i ?>"></th>
+                                </tr>
+                                <?php } 
+                                    $select_blog = $conn->prepare("SELECT * FROM tbl_blog where title=?"); 
+                                    $select_blog->execute([$title]);
+                                    $fetch_blog = $select_blog->fetch(PDO::FETCH_ASSOC)
+                                ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <input type="hidden" name="sonoidunghidden" value="<?= $sonoidung ?>">
+                        <input type="hidden" name="id_blog" value="<?= $fetch_blog['id'] ?>">
+                        <input type="submit" value="Thêm nội dung" name="themnoidung">
+                    </form>
+                    <?php } ?>
+                </div>
+                <div class="container">
+                    <?php
+                        $select_blog = $conn->prepare("SELECT * FROM tbl_blog"); 
+                        $select_blog->execute();
+                        if($select_blog->rowCount() > 0){
+                        while($fetch_blog = $select_blog->fetch(PDO::FETCH_ASSOC)){
+                            $formatted_time_post = date("d F Y", strtotime($fetch_blog["time_post"]));
+                    ?>
+                    <div class="block">
+                        <div class="image-container">
+                        <img src="../uploads/<?= $fetch_blog['blog_image'] ?>" alt="Image 2" class="image">
+                        </div>
+                        <div class="content">
+                        <p class="date"><?= $formatted_time_post ?></p>
+                        <h2 class="title"><?= $fetch_blog['title'] ?></h2>
+                        <div>
+                            <a href="update_blog.php?update_blog=<?= $fetch_blog['id']; ?>" class="read-more" onclick="return confirm('update?');">Sửa nội dung</a>
+                            <a href="blog.php?delete_blog=<?= $fetch_blog['id']; ?>" class="read-more" onclick="return confirm('update?');">Xóa tin tức</a>
+                        </div>
+                        </div>
+                    </div>
+                    <?php
+                        }
+                        }else{
+                            echo '<p class="empty">Không có tin tức nào !</p>';
+                        }
+                    ?>
+                    <!-- Thêm các khối khác nếu cần -->
+                </div>
+                </main>
+                <?php include ('../admin/component/admin_footer.php'); ?>
+            </div>
+        </div>
+        <?php include ('../admin/component/admin_script.php'); ?>
+    </body>
+</html>
+<?php
+    if (isset($_POST['themnoidung'])) {
+        $sonoidung = $_POST['sonoidunghidden'];
+        $id_blog = $_POST['id_blog'];
+        $file_anh = array();
+        $filetemp_anh = array();
+        $content = array();
+    
+        // Thu thập thông tin ảnh và nội dung từ biểu mẫu
+        for ($i = 0; $i < $sonoidung; $i++) {
+            $file_anh[$i] = $_FILES["anh$i"]["name"];
+            $content[$i] = $_POST["content$i"];
+            $filetemp_anh[$i] = $_FILES["anh$i"]["tmp_name"];
+        }
+    
+        // Thực hiện lưu trữ ảnh và thêm thông tin vào cơ sở dữ liệu
+        $target_directory = "../uploads/";
+        for ($i = 0; $i < $sonoidung; $i++) {
+            $target_anh = $target_directory . $file_anh[$i];
+            $luu = move_uploaded_file($filetemp_anh[$i], $target_anh);
+    
+            // Thêm dữ liệu vào cơ sở dữ liệu
+            $sql = "INSERT INTO tbl_img_blog (id_blog, image_blog, content_img) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$id_blog, $file_anh[$i], $content[$i]]);
+        }
+    
+        if ($stmt) {
+            echo "Tải ảnh lên và thêm nội dung thành công!";
+        } else {
+            echo "Lỗi trong quá trình tải ảnh hoặc thêm dữ liệu.";
+        }
+    }
+?>
